@@ -1,13 +1,14 @@
 #pragma once
 #include "raylib-cpp.hpp"
 #include "tools.hpp"
+#include "menu.hpp"
 
 // Base object for further structs such as Player, Enemy etc.
 struct Entity
 {
     raylib::Texture sprite;
     raylib::Rectangle hitBox;
-    raylib::Vector2 pos{0, 0};
+    raylib::Vector2 pos{250, 250};
     raylib::Vector2 velocity{0.0f, 0.0f};
     float rotation = 0.0f; // In radians
     const float dragScaler = 0.2f;
@@ -66,23 +67,21 @@ struct Entity
     }
 
     // This needs to be called if you want the entity to move
-    // (Doesn't implement delta time...)
-    raylib::Vector2 applyVelocity(bool applyDrag = true)
-    {
-        if(applyDrag) this->applyDrag();
-        raylib::Vector2 futurePosition = this->pos + this->velocity;
+    Vector2 applyVelocity(bool applyDrag = true){
+            if (applyDrag) this->applyDrag();
+            raylib::Vector2 futurePosition = this->pos + this->velocity;
 
-        // Bounds check
-        // TODO: Make it account for size of hitbox and maybe find a less glitchy implementation
-        if (futurePosition.x < GetScreenWidth() 
-            && futurePosition.x >= 0 
-            && futurePosition.y < GetScreenHeight()
-            && futurePosition.y >= 0){
-            this->setPos(futurePosition);
+            // Bounds check
+            // TODO: Make it account for size of sprite and maybe find a less glitchy implementation
+            if (futurePosition.x < virtualResolutions::VIRTUAL_WIDTH
+                && futurePosition.x >= 0
+                && futurePosition.y < virtualResolutions::VIRTUAL_HEIGHT
+                && futurePosition.y >= 0) {
+                this->setPos(futurePosition);
+                return this->pos;
+            }
+
             return this->pos;
-        }
-        
-        return this->pos;
     }
 
     // Call this to display said entity
@@ -97,9 +96,11 @@ struct Entity
 struct Player : Entity{
     Player(){
 
-        // TODO: Get an actually trasnparant PNG
-        Image ico = LoadImage("media/textures/player.png");
-        ImageResize(&ico, 50, 50); // From what I can tell textures can't be resized or edited after being loaded. Consider declaring sprite as image?
+        Player::setPos(Vector2{ 925, 825 });
+
+        Image ico = LoadImage("media/textures/playerOutline.png"); //TODO: Allow the player to change the highligts
+
+        ImageResize(&ico, 93, 97); // From what I can tell textures can't be resized or edited after being loaded. Consider declaring sprite as image?
         sprite = LoadTextureFromImage(ico);
         UnloadImage(ico);
     }

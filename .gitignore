@@ -2,5 +2,8 @@
 warblade
 main
 build
+.vs
+.vscode
+CMakeSettings.json
 vcpkg.json
 vcpkg_installed
